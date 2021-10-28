@@ -1,8 +1,12 @@
 import 'dart:developer';
 
+import 'package:bluetooth_sample/scan_flow/bloc/ScanStreamBloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+
+import '../Models.dart';
 
 class ConnectBtPage extends StatefulWidget {
   final void Function(String address) onDeviceSelected;
@@ -16,6 +20,13 @@ class ConnectBtPage extends StatefulWidget {
 class ConnectBtPageState extends State<ConnectBtPage> {
   FlutterBluetoothSerial bluetoothSerial = FlutterBluetoothSerial.instance;
   List<BluetoothDevice> devices = List.empty(growable: true);
+
+  @override
+  void initState() {
+    if(context.read<ScanStreamBloc>().scanDetails == null)
+      context.read<ScanStreamBloc>().scanDetails = ScanDetails();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

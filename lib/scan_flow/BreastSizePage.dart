@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +7,7 @@ import '../Models.dart';
 import 'bloc/ScanStreamBloc.dart';
 
 class BreastSizePage extends StatefulWidget {
-  final void Function(int ub, int lb) onBreastSizeSet;
+  final void Function() onBreastSizeSet;
 
   BreastSizePage({
     Key? key,
@@ -20,8 +19,8 @@ class BreastSizePage extends StatefulWidget {
 }
 
 class BreastSizePageState extends State<BreastSizePage> {
-  int upperBust = 0;
-  int lowerBust = 0;
+  int overBust = 0;
+  int underBust = 0;
   ScanDetails? scanDetails;
 
   List<int> ubSizes = [
@@ -70,10 +69,10 @@ class BreastSizePageState extends State<BreastSizePage> {
               Text(scanDetails?.breastType ?? ""),
               DropdownButton<int>(
                 hint: Text("Upper Bust"),
-                value: upperBust,
+                value: overBust,
                 onChanged: (int? value) {
                   setState(() {
-                    if (value != null) upperBust = value;
+                    if (value != null) overBust = value;
                   });
                 },
                 items: ubSizes.map((int size) {
@@ -95,10 +94,10 @@ class BreastSizePageState extends State<BreastSizePage> {
               ),
               DropdownButton<int>(
                 hint: Text("Lower Bust"),
-                value: lowerBust,
+                value: underBust,
                 onChanged: (int? value) {
                   setState(() {
-                    if (value != null) lowerBust = value;
+                    if (value != null) underBust = value;
                   });
                 },
                 items: lbSizes.map((int size) {
@@ -126,9 +125,11 @@ class BreastSizePageState extends State<BreastSizePage> {
             right: 16,
             child: MaterialButton(
               child: Text("Confirm"),
-              onPressed: lowerBust != null && upperBust != null
+              onPressed: underBust != 0 && overBust != 0
                   ? () {
-                      widget.onBreastSizeSet(upperBust, lowerBust);
+                      scanDetails?.underBust = underBust.toDouble();
+                      scanDetails?.overBust = overBust.toDouble();
+                      widget.onBreastSizeSet();
                     }
                   : null,
             ))

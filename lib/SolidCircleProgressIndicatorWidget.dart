@@ -1,3 +1,4 @@
+import 'package:bluetooth_sample/TextWidget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +16,7 @@ class SolidCircleProgressIndicatorWidgetState
     extends State<SolidCircleProgressIndicatorWidget>
     with TickerProviderStateMixin {
   double pressure = 0.0;
+  TextWidgetController textController = TextWidgetController(text: "");
 
   Animation<double>? animation;
   AnimationController? controller;
@@ -48,7 +50,7 @@ class SolidCircleProgressIndicatorWidgetState
           //controller.forward();
         }
       });
-
+    textController.setText("Pressure: ${animation?.value.toString()}, ");
     controller?.forward();
   }
 
@@ -89,6 +91,7 @@ class SolidCircleProgressIndicatorWidgetState
                   painter: RingPainter(),
                 ),
               ),
+              TextWidget(textController),
             ],
           ),
         ),
@@ -118,12 +121,12 @@ class SolidCirclePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    //print("paint() called with pressure: $pressure");
     double r = (pressure < 45)
         ? (8 / 9) * pressure
-        : (45 < pressure && pressure < 70)
+        : (45 <= pressure && pressure <= 70)
             ? 40
             : 40 + ((pressure - 70) > 15 ? 15.0 : (pressure - 70));
+    print("paint() called with pressure: $pressure, radius: $r");
     var p = Paint()
       ..color = Color((pressure < 45)
           ? 0xfffa9e77
@@ -142,7 +145,7 @@ class SolidCirclePainter extends CustomPainter {
 
 class IndicatorRadiusController extends ChangeNotifier {
   double radius = 0.0;
-  bool isVisible = true;
+  bool isVisible = false;
 
   void setRadius(double radius) {
     this.radius = radius;

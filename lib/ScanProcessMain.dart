@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:bloc/bloc.dart';
 import 'package:bluetooth_sample/Models.dart';
 import 'package:bluetooth_sample/TextWidget.dart';
 import 'package:bluetooth_sample/scan_flow/BreastSizePage.dart';
@@ -87,24 +86,13 @@ class ScanProcessMainState extends State<ScanProcessMain> {
         ?.pushNamed(routeBreastSize);
   }
 
-  void onBreastSizeConfirmed(int ub, int lb) {
-    log("onBreastSizeConfirmed called with: ub: [$ub], lb: [$lb]");
-
-    var bloc = _navigatorKey.currentContext?.read<ScanStreamBloc>();
-    if (bloc?.scanDetails == null) {
-      bloc?.scanDetails = ScanDetails();
-    }
-    bloc?.scanDetails?.underBust = lb.toDouble();
-    bloc?.scanDetails?.overBust = ub.toDouble();
+  void onBreastSizeConfirmed() {
+    log("onBreastSizeConfirmed called");
     _navigatorKey.currentState?.pushNamed(routeStartScan,);
   }
 
   void onStartScan(String breastSide) {
     log("onStartScan called with: breastSide: [],");
-    var bloc = _navigatorKey.currentContext?.read<ScanStreamBloc>();
-    if (bloc?.scanDetails == null) {
-      bloc?.scanDetails = ScanDetails();
-    }
     _navigatorKey.currentState?.pushNamed(routeScan, arguments: {
       "breastSide": breastSide,
     });
@@ -216,8 +204,8 @@ class ScanProcessMainState extends State<ScanProcessMain> {
         break;
       case routeBreastSize:
         page = BreastSizePage(
-          onBreastSizeSet: (ub, lb) {
-            onBreastSizeConfirmed(ub, lb);
+          onBreastSizeSet: () {
+            onBreastSizeConfirmed();
           },
         );
         itemsOnStack++;
@@ -236,7 +224,6 @@ class ScanProcessMainState extends State<ScanProcessMain> {
         page = ScanPage(
           onScanComplete: (breastSide, breastType, ub, lb) {},
           breastSide: args?["breastSide"] ?? "",
-          connection: connection,
         );
         itemsOnStack++;
         textWidgetController.setText("Scan");

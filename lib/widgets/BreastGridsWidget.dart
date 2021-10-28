@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class BreastGridsWidget extends StatefulWidget {
   List<ScanTile> grids;
-  int selectedPos = 0;
+  int selectedPos = -1;
   String? breastSide;
   int boxSize;
   final void Function(int pos) onItemClicked;

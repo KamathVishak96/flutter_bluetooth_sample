@@ -18,13 +18,11 @@ class ScanPage extends StatefulWidget {
   final void Function(String breast, String breastType, int ub, int lb)
       onScanComplete;
   final String breastSide;
-  final BluetoothConnection? connection;
 
   const ScanPage(
       {Key? key,
       required this.onScanComplete,
-      required this.breastSide,
-      required this.connection})
+      required this.breastSide})
       : super(key: key);
 
   @override
@@ -50,7 +48,7 @@ class ScanPageState extends State<ScanPage> {
         widget.breastSide == "Left" ? lBreastTiles : rBreastTiles,
         widget.breastSide);
 
-    connection = widget.connection;
+    connection = context.read<ScanStreamBloc>().connection;
 
     super.initState();
   }
@@ -127,10 +125,6 @@ class ScanPageState extends State<ScanPage> {
 
   void sendCommand(String source) {
     List<int> list = utf8.encode(source);
-    /*if(command == "^" && source != "^") {
-      prevCommand = "^";
-    }
-    command = source;*/
     Uint8List bytes = Uint8List.fromList(list);
     connection?.output.add(bytes);
   }
@@ -152,11 +146,13 @@ class ScanPageState extends State<ScanPage> {
           gridsController?.setSelectedPosition(-1);
           indicatorController.setVisibility(false);
           context.read<ScanStreamBloc>().scanDetails?.leftBreastData = lBreastTiles.map((e) => e.data).toList();
+          context.read<ScanStreamBloc>().scanDetails?.rightBreastData = rBreastTiles.map((e) => e.data).toList();
         } else if (gridsController?.breastSide == "Right") {
           rBreastTiles[gridsController!.selectedPosition].data = scanData;
           gridsController?.setGrids(rBreastTiles);
           gridsController?.setSelectedPosition(-1);
           indicatorController.setVisibility(false);
+          context.read<ScanStreamBloc>().scanDetails?.leftBreastData = lBreastTiles.map((e) => e.data).toList();
           context.read<ScanStreamBloc>().scanDetails?.rightBreastData = rBreastTiles.map((e) => e.data).toList();
         }
       });
